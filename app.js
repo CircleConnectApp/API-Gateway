@@ -66,7 +66,7 @@ app.use('/api/admin',
     authMiddleware(['admin']), 
     adminMiddleware,
     createProxyMiddleware({
-        target: process.env.ADMIN_SERVICE_URL || 'http://localhost:3000', // Assuming admin routes are in community service
+        target: process.env.ADMIN_SERVICE_URL || 'http://localhost:3000', 
         changeOrigin: true,
         pathRewrite: { '^/api/admin': '/admin' }
     })
