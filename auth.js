@@ -15,10 +15,10 @@ const authMiddleware = (requiredRoles = []) => {
                 return res.status(403).json({ error: 'Invalid or expired token' });
             }
 
-            // Check token structure (compatible with Go version)
+           
             const user = {
                 id: decoded.user_id || decoded.sub,
-                role: decoded.role || decoded.roles?.[0] // Support both formats
+                role: decoded.role || decoded.roles?.[0] 
             };
 
             if (!user.role) {
