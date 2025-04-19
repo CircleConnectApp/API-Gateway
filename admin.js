@@ -1,18 +1,18 @@
-const jwt = require('jsonwebtoken');
-
 const adminMiddleware = (req, res, next) => {
-    
     if (!req.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(401).json({ error: 'Authentication middleware not properly configured' });
     }
 
-    
     if (req.user.role !== 'admin') {
-        console.log(`User role '${req.user.role}' is not admin`);
-        return res.status(403).json({ error: 'Admin access required' });
+        console.warn(`Unauthorized admin access attempt by ${req.user.id}`);
+        return res.status(403).json({
+            error: 'Admin privileges required',
+            required: 'admin',
+            current: req.user.role
+        });
     }
 
-    console.log('Admin access granted');
+    console.log(`Admin access granted to ${req.user.id}`);
     next();
 };
 
