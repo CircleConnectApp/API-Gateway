@@ -1,27 +1,28 @@
-require('dotenv').config();
+require('dotenv').config(); 
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
-const rateLimiter = require('./middlewares/limiter/limiter');
-const concurrencyLimiter = require('./middlewares/limiter/concurrency');
-const authMiddleware = require('./middlewares/auth');
-const adminMiddleware = require('./middlewares/admin');
+const rateLimiter = require('./middlewares/limiter/limiter'); 
+const concurrencyLimiter = require('./middlewares/limiter/concurrency'); 
+const authMiddleware = require('./middlewares/auth'); 
+const adminMiddleware = require('./middlewares/admin'); 
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(rateLimiter);
-app.use(concurrencyLimiter);
+app.use(rateLimiter); 
+app.use(concurrencyLimiter); 
 
-// Service proxies with corrected ports
+// Service Proxies
 app.use('/api/auth', createProxyMiddleware({
     target: process.env.AUTH_SERVICE_URL || 'http://localhost:8000', // Auth service
     changeOrigin: true,
     pathRewrite: { '^/api/auth': '' }
 }));
 
+// Users Service
 app.use('/api/users', authMiddleware(), createProxyMiddleware({
     target: process.env.USER_SERVICE_URL || 'http://localhost:8081', // User service
     changeOrigin: true,
@@ -33,6 +34,7 @@ app.use('/api/users', authMiddleware(), createProxyMiddleware({
     }
 }));
 
+// Communities Service
 app.use('/api/communities', authMiddleware(), createProxyMiddleware({
     target: process.env.COMMUNITY_SERVICE_URL || 'http://localhost:3000', // Community service
     changeOrigin: true,
@@ -66,7 +68,7 @@ app.use('/api/admin',
     authMiddleware(['admin']), 
     adminMiddleware,
     createProxyMiddleware({
-        target: process.env.ADMIN_SERVICE_URL || 'http://localhost:3000', 
+        target: process.env.ADMIN_SERVICE_URL || 'http://localhost:3000', // Admin service
         changeOrigin: true,
         pathRewrite: { '^/api/admin': '/admin' }
     })
@@ -80,3 +82,4 @@ app.listen(PORT, () => {
     console.log(`- Users: ${process.env.USER_SERVICE_URL || 'http://localhost:8081'}`);
     console.log(`- Communities: ${process.env.COMMUNITY_SERVICE_URL || 'http://localhost:3000'}`);
 });
+
