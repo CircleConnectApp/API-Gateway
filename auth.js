@@ -15,17 +15,16 @@ const authMiddleware = (requiredRoles = []) => {
                 return res.status(403).json({ error: 'Invalid or expired token' });
             }
 
-           
             const user = {
                 id: decoded.user_id || decoded.sub,
-                role: decoded.role || decoded.roles?.[0] 
+                role: decoded.role || decoded.roles?.[0]
             };
 
             if (!user.role) {
                 return res.status(403).json({ error: 'Token missing role information' });
             }
 
-            // Role-based access control
+            
             if (requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
                 return res.status(403).json({ error: 'Insufficient permissions' });
             }
